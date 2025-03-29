@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@martzmakes/constructs": "^0.6.0",
-    "@martzmakes/published-api": "../published-api/dist",
+    "@martzmakes/published-api": "../published-api/generatedClient",
     "aws-cdk-lib": "2.185.0",
     "constructs": "^10.0.0"
   }
