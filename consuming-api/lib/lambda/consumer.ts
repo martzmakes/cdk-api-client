@@ -6,5 +6,4 @@ export const handler = async () => {
   const topping = await apiClient.getToppingByName({
     toppingName: "Pepperoni",
   });
-  topping.
 };
