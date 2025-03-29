@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "__mocks__/**",
+    "**/*spec.ts",
+    "jest.setup.ts"
+  ],
+  "include": [
+    "apiClient/**",
+  ],
+  "compilerOptions": {
+    "declaration": true,
+    "types": ["node"]
+  }
+}

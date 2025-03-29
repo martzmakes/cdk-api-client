@@ -1,0 +1,11 @@
+{
+  "name": "@martzmakes/@martzmakes/api-constructs",
+  "version": "0.1.0",
+  "description": "API client for publishedApi",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "dependencies": {
+    "@martzmakes/constructs": "^0.6.0"
+  },
+  "peerDependencies": {}
+}
