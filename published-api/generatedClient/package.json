@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "dependencies": {
-    "@martzmakes/constructs": "^0.6.0"
+    "@martzmakes/constructs": "^0.7.1"
   },
   "peerDependencies": {}
 }

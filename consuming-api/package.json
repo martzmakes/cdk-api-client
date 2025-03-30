@@ -22,7 +22,7 @@
     "typescript": "~5.6.3"
   },
   "dependencies": {
-    "@martzmakes/constructs": "^0.6.0",
+    "@martzmakes/constructs": "^0.7.1",
     "@martzmakes/published-api": "../published-api/generatedClient",
     "aws-cdk-lib": "2.185.0",
     "constructs": "^10.0.0"
