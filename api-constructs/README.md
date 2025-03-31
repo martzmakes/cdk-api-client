@@ -1,5 +1,7 @@
 # API Constructs - TypeScript API Client Generator
 
+> **Note:** These constructs are not intended for production use in their current state. Once stable, they will be moved to the `@martzmakes/constructs` library. This repository exists primarily to support a pending blog post.
+
 A reusable library that generates strongly-typed API clients and mocks from endpoint definitions.
 
 ## Overview

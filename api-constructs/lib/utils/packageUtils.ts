@@ -6,7 +6,11 @@ import * as path from "path";
  */
 function getRootPackageJson(): Record<string, any> {
   // Start from the current directory and look upward until we find package.json
-  let currentDir = path.resolve(__dirname);
+  let currentDir = process.cwd();
+  currentDir.includes("node_modules")
+    ? (currentDir = currentDir.split("node_modules")[0])
+    : currentDir;
+  console.log(`Root package.json directory: ${currentDir}`);
   let rootPackagePath;
 
   while (currentDir !== path.parse(currentDir).root) {
@@ -33,9 +37,13 @@ export function generateClientPackageJson(projectName: string): string {
   try {
     const rootPackageJson = getRootPackageJson();
 
+    const name = rootPackageJson.name.includes("/")
+      ? rootPackageJson.name
+      : `@martzmakes/${rootPackageJson.name}`;
+
     // Create a minimal package.json
     const clientPackageJson = {
-      name: `@martzmakes/${rootPackageJson.name}`,
+      name,
       version: rootPackageJson.version || "1.0.0",
       description: `API client for ${projectName}`,
       main: "index.js",

@@ -8,14 +8,16 @@ export type ApiEndpoint<
   Output = any,
   Resources = any,
 > = {
-  method: M;
-  path: string;
+  description?: string;
   input?: Input;
+  method: M;
   output?: Output;
+  path: string;
 } & (
   | {
       entry: string;
-      lambdaGenerator: (args: Resources) => Omit<LambdaProps, "entry" | "name">;
+      queue?: boolean;
+      lambdaGenerator: (args: Resources) => Omit<LambdaProps, "entry" | "name" | "queue" | "description">;
     }
   // | {
   //     dynamoGenerator: (args: Resources) => Omit<EndpointDynamo, "method" | "path" | "requestTemplate" | "responseTemplate">;

@@ -23,6 +23,50 @@ The Published API project showcases:
 **The `generatedClient/` folder should not be modified manually!** 
 This folder is automatically generated using `npm run build` or `npm run generateApi`. Any manual changes will be overwritten during the next build.
 
+## The DefinedInternalApi Construct
+
+This project utilizes the `DefinedInternalApi` construct from the api-constructs library, which automates the creation of API Gateway resources, Lambda integrations, and client generation.
+
+### Key Features
+
+- **Automated API Gateway Setup**: Automatically creates RESTful API endpoints based on your defined routes
+- **Lambda Integration**: Maps each endpoint to its corresponding Lambda handler
+- **Strong Typing**: Maintains TypeScript interfaces throughout the entire stack
+- **Client Generation**: Produces strongly-typed client code ready for consumption
+
+### Usage Example
+
+The `DefinedInternalApi` construct is used in `published-api-stack.ts`:
+
+```typescript
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { endpoints } from './routes/internal';
+import { DefinedInternalApi } from "@martzmakes/api-constructs/lib/constructs/DefinedInternalApi";
+
+export class PublishedApiStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    new DefinedInternalApi(this, 'PublishedApi', {
+      apiClientDefinition: endpoints,
+      endpointResources: {
+        // Add any resources needed by the endpoints here
+      },
+    });
+  }
+}
+```
+
+### Configuration Options
+
+The `DefinedInternalApi` construct accepts the following properties:
+
+- **apiClientDefinition**: The API endpoint definitions (from your routes file)
+- **endpointResources**: Resources to be passed to endpoint lambda generators (like DynamoDB tables, etc.)
+- **logGroupOverrides** (optional): Properties to override default LogGroup settings
+- **restApiOverrides** (optional): Properties to override default RestApi settings
+
 ## Getting Started
 
 1. Install dependencies: `npm install`

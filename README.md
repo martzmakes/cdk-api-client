@@ -1,5 +1,7 @@
 # CDK API Client Generator
 
+> **Note:** These constructs are not intended for production use in their current state. Once stable, they will be moved to the `@martzmakes/constructs` library. This repository exists primarily to support a pending blog post.
+
 A comprehensive mono-repo demonstrating how to build, publish, and consume strongly-typed API clients in a TypeScript AWS CDK environment.
 
 ## Overview

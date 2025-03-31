@@ -9,6 +9,7 @@ import { ensureDirectoryExists } from "../lib/utils/fileUtils";
 import { copyInterfaceFiles } from "../lib/utils/interfaceUtils";
 import { generateClientPackageJson } from "../lib/utils/packageUtils";
 import { generateClientCode } from "../lib/utils/generators/clientCodeGenerator";
+import { generateClientReadme } from "../lib/utils/generators/readmeGenerator";
 import { generateApiClientMocks } from "../lib/utils/mockGenerator/generateApiClientMocks";
 import { generateApiContractTests } from "../lib/utils/mockGenerator/generateApiContractTests";
 
@@ -89,6 +90,21 @@ export * from './apiClient';
   const packageJsonContent = generateClientPackageJson(projectName);
   fs.writeFileSync(path.join(outputDir, "package.json"), packageJsonContent);
   console.log(`Generated package.json for client library`);
+  const packageName = JSON.parse(packageJsonContent).name;
+
+  // Generate README.md for the client - now passing the full endpoint definitions
+  const readmeContent = generateClientReadme({
+    projectName,
+    packageName,
+    endpoints: endpointsDef,
+    hasMocks: generateMocks,
+  });
+  fs.writeFileSync(path.join(outputDir, "README.md"), readmeContent);
+  console.log(
+    `Generated README.md for client library with ${
+      Object.keys(endpointsDef).length
+    } documented endpoints`
+  );
 
   const gitIgnoreContent = `*.ts
   *.js`;
@@ -99,7 +115,10 @@ export * from './apiClient';
 
   // Write endpoint entries to a file for tests to use
   const endpointEntriesJson = JSON.stringify(endpointEntries, null, 2);
-  fs.writeFileSync(path.join(outputDir, "endpointEntries.json"), endpointEntriesJson);
+  fs.writeFileSync(
+    path.join(outputDir, "endpointEntries.json"),
+    endpointEntriesJson
+  );
   console.log(`Generated endpoint entries mapping for tests`);
 
   // Generate a Jest setup file that will load the endpoint entries
@@ -138,7 +157,7 @@ try {
       console.error("Error generating API client mocks:", error);
     }
   }
-  
+
   // Generate contract tests if requested
   if (generateTests && generateMocks) {
     try {
@@ -171,7 +190,8 @@ async function main() {
 
   const projectName = args[offset];
   const endpointsPath = args[offset + 1];
-  const outputDir = args[offset + 2] || path.resolve(process.cwd(), "generatedClient");
+  const outputDir =
+    args[offset + 2] || path.resolve(process.cwd(), "generatedClient");
   const generateMocks = !args.includes("--no-mocks");
   const generateTests = !args.includes("--no-tests");
 

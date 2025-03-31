@@ -1,5 +1,5 @@
 {
-  "name": "@martzmakes/@martzmakes/api-constructs",
+  "name": "@martzmakes/published-api",
   "version": "0.1.0",
   "description": "API client for publishedApi",
   "main": "index.js",
