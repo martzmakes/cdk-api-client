@@ -1,11 +1,12 @@
+import { ApiEndpoint } from "./ApiEndpoint";
+import { HttpMethod } from "./HttpMethod";
+
 /**
- * Interface for endpoint definition
+ * Type alias for endpoint definitions
+ * 
+ * An endpoint can be implemented in two ways:
+ * 1. Lambda-based: uses a Lambda function for implementation (entry + lambdaGenerator)
+ * 2. DynamoDB-based: uses direct DynamoDB integration (dynamoGenerator + requestTemplate/responseTemplate)
+ *    For DynamoDB endpoints, VTL templates will be automatically generated based on input/output types
  */
-export interface Endpoint {
-  description?: string;
-  input?: any;
-  method: string;
-  output?: any;
-  path: string;
-  // Add other properties that might be in your endpoint definitions
-}
+export type Endpoint = ApiEndpoint<HttpMethod>;

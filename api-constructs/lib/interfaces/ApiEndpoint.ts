@@ -1,6 +1,7 @@
 import { LambdaProps } from "@martzmakes/constructs/cdk/interfaces/LambdaProps";
 import { HttpMethod } from "./HttpMethod";
 import { InputAllowed } from "./InputAllowed";
+import { EndpointDynamo } from "./EndpointDynamo";
 
 export type ApiEndpoint<
   M extends HttpMethod,
@@ -19,9 +20,9 @@ export type ApiEndpoint<
       queue?: boolean;
       lambdaGenerator: (args: Resources) => Omit<LambdaProps, "entry" | "name" | "queue" | "description">;
     }
-  // | {
-  //     dynamoGenerator: (args: Resources) => Omit<EndpointDynamo, "method" | "path" | "requestTemplate" | "responseTemplate">;
-  //     requestTemplate?: string;
-  //     responseTemplate: string;
-  //   }
+  | {
+      dynamoGenerator: (args: Resources) => Omit<EndpointDynamo, "method" | "path" | "requestTemplate" | "responseTemplate">;
+      requestTemplateOverride?: InputAllowed<M, string>;
+      responseTemplateOverride?: string;
+    }
 );

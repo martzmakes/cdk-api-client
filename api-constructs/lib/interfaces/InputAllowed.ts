@@ -1,5 +1,5 @@
 import { HttpMethod } from "./HttpMethod";
 
-export type InputAllowed<M extends HttpMethod> = M extends "GET" | "DELETE"
+export type InputAllowed<M extends HttpMethod, InputType = any> = M extends "GET" | "DELETE"
   ? undefined
-  : any;
+  : InputType;

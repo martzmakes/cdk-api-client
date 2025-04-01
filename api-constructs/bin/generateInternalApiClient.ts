@@ -12,6 +12,7 @@ import { generateClientCode } from "../lib/utils/generators/clientCodeGenerator"
 import { generateClientReadme } from "../lib/utils/generators/readmeGenerator";
 import { generateApiClientMocks } from "../lib/utils/mockGenerator/generateApiClientMocks";
 import { generateApiContractTests } from "../lib/utils/mockGenerator/generateApiContractTests";
+import { generateVtlTemplates } from "../lib/utils/generators/vtlGenerator";
 
 /**
  * Creates an API client based on the endpoint definitions and generates static files
@@ -20,6 +21,7 @@ import { generateApiContractTests } from "../lib/utils/mockGenerator/generateApi
  * @param outputDir Directory where the generated client should be saved
  * @param generateMocks Whether to generate mock clients for testing
  * @param generateTests Whether to generate contract tests between handlers and mocks
+ * @param generateVtl Whether to generate VTL templates for DynamoDB endpoints
  */
 export async function generateApiClient({
   projectName,
@@ -27,12 +29,14 @@ export async function generateApiClient({
   outputDir = path.resolve(process.cwd(), "generatedClient"),
   generateMocks = true,
   generateTests = true,
+  generateVtl = true,
 }: {
   projectName: string;
   endpointsPath: string;
   outputDir?: string;
   generateMocks?: boolean;
   generateTests?: boolean;
+  generateVtl?: boolean;
 }): Promise<void> {
   const endpointsDef = importEndpoints(endpointsPath) as Record<
     string,
@@ -105,6 +109,16 @@ export * from './apiClient';
       Object.keys(endpointsDef).length
     } documented endpoints`
   );
+
+  // Generate VTL templates for endpoints that use dynamoGenerator
+  if (generateVtl) {
+    try {
+      generateVtlTemplates(endpointsDef, outputDir);
+      console.log(`Generated VTL templates for DynamoDB endpoints in ${outputDir}/vtl`);
+    } catch (error) {
+      console.error("Error generating VTL templates:", error);
+    }
+  }
 
   const gitIgnoreContent = `*.ts
   *.js`;
@@ -183,7 +197,7 @@ async function main() {
   // Simple argument parsing (projectName and endpointsPath are required)
   if (args.length < 2 + offset) {
     console.error(
-      "Usage: npx @martzmakes/api-constructs generateInternalApiClient <projectName> <endpointsPath> [outputDir] [--no-mocks] [--no-tests]"
+      "Usage: npx @martzmakes/api-constructs generateInternalApiClient <projectName> <endpointsPath> [outputDir] [--no-mocks] [--no-tests] [--no-vtl]"
     );
     process.exit(1);
   }
@@ -194,6 +208,7 @@ async function main() {
     args[offset + 2] || path.resolve(process.cwd(), "generatedClient");
   const generateMocks = !args.includes("--no-mocks");
   const generateTests = !args.includes("--no-tests");
+  const generateVtl = !args.includes("--no-vtl");
 
   try {
     await generateApiClient({
@@ -202,6 +217,7 @@ async function main() {
       outputDir,
       generateMocks,
       generateTests,
+      generateVtl,
     });
   } catch (error) {
     console.error("Error generating API client:", error);

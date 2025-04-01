@@ -10,6 +10,7 @@ export * from './utils/interfaceUtils';
 export * from './utils/packageUtils';
 export * from './utils/generators/clientCodeGenerator';
 export * from './utils/generators/readmeGenerator';
+export * from './utils/generators/vtlGenerator';
 export * from './utils/mockGenerator/generateApiClientMocks';
 export * from './utils/mockGenerator/generateApiContractTests';
 export * from './utils/mockGenerator/generateMockClientCode';

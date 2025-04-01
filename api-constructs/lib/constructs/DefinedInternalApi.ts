@@ -118,7 +118,7 @@ export class DefinedInternalApi extends Construct {
 
     Object.entries(props.apiClientDefinition).forEach(([name, apiEndpoint]) => {
       const apiResource = this.createEndpointPath({ path: apiEndpoint.path });
-      if (apiEndpoint.lambdaGenerator) {
+      if ('lambdaGenerator' in apiEndpoint) {
         this.addLambdaDefinition({
           apiResource,
           apiEndpoint,
@@ -184,7 +184,7 @@ export class DefinedInternalApi extends Construct {
    * Can create either a direct lambda integration or an SQS queue backed endpoint.
    * 
    * @param {Object} params - Parameters object
-   * @param {ApiEndpoint<any, any, any>} params.apiEndpoint - The API endpoint configuration
+   * @param {ApiEndpoint<any, any, any, any>} params.apiEndpoint - The API endpoint configuration
    * @param {Resource} params.apiResource - The API Gateway resource to attach to
    * @param {any} params.endpointResources - Resources to pass to the lambda generator
    * @param {string} params.name - Name of the endpoint
@@ -196,7 +196,7 @@ export class DefinedInternalApi extends Construct {
     endpointResources,
     name,
   }: {
-    apiEndpoint: ApiEndpoint<any, any, any>;
+    apiEndpoint: Extract<ApiEndpoint<any, any, any, any>, { lambdaGenerator: any }>;
     apiResource: Resource;
     endpointResources: any;
     name: string;
