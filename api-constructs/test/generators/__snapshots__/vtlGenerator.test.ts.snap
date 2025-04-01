@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generates DELETE request VTL template: DELETE request VTL template 1`] = `
+"{
+  "TableName": "TestTable",
+  "Key": {
+    "id": {
+      "S": "$input.params('id')"
+    }
+  }
+}"
+`;
+
+exports[`generates GET request VTL template for simple ID interface: GET request VTL template 1`] = `
+"{
+  "TableName": "TestTable",
+  "KeyConditionExpression": "#pk = :pkVal",
+  "ExpressionAttributeNames": {
+    "#pk": "id"
+  },
+  "ExpressionAttributeValues": {
+    ":pkVal": {
+      "S": "$input.params('id')"
+    }
+  }
+}"
+`;
+
+exports[`generates POST request VTL template for complex interface: POST request VTL template 1`] = `
+"{
+  "TableName": "TestTable",
+  "Item": {
+    "id": {
+      "S": $input.json('$.id')
+    },
+    "count": {
+      "N": $input.json('$.count')
+    },
+    "isActive": {
+      "BOOL": $input.json('$.isActive')
+    },
+    "tags": $util.dynamodb.toDynamoDBJson($input.json('$.tags'))
+  }
+}"
+`;
+
+exports[`generates PUT request VTL template: PUT request VTL template 1`] = `
+"{
+  "TableName": "TestTable",
+  "Key": {
+    "id": {
+      "S": "$input.params('id')"
+    }
+  },
+  "UpdateExpression": "set #name = :name, #description = :description, #updatedAt = :updatedAt",
+  "ExpressionAttributeNames": {
+    "#name": "name",
+    "#description": "description",
+    "#updatedAt": "updatedAt"
+  },
+  "ExpressionAttributeValues": {
+    ":name": {
+      "S": "$input.json('$.name')"
+    },
+    ":description": {
+      "S": "$input.json('$.description')"
+    },
+    ":updatedAt": {
+      "S": "$util.time.nowISO8601()"
+    }
+  }
+}"
+`;
+
+exports[`generates response VTL template: Response VTL template 1`] = `
+"#set($inputRoot = $input.path('$'))
+{
+  "statusCode": 200,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{
+    \\"id\\":#if($inputRoot.id)\\"$util.escapeJavaScript($inputRoot.id)\\"#elsenull#end,
+    \\"name\\":#if($inputRoot.name)\\"$util.escapeJavaScript($inputRoot.name)\\"#elsenull#end,
+    \\"count\\":#if($inputRoot.count)$inputRoot.count#else0#end,
+    \\"isActive\\":#if($inputRoot.isActive)$inputRoot.isActive#else false#end,
+    \\"tags\\":#if($inputRoot.tags)$util.escapeJavaScript($input.json('$.tags'))#else[]#end,
+    \\"created\\":#if($inputRoot.created)\\"$util.escapeJavaScript($inputRoot.created)\\"#elsenull#end
+  }"
+}"
+`;
+
+exports[`uses basic templates when interface files not found: Fallback request VTL template 1`] = `
+"{
+  "pk": "pk",
+  "sk": "sk",
+  "method": "GET"
+}"
+`;
+
+exports[`uses basic templates when interface files not found: Fallback response VTL template 1`] = `
+"#set($inputRoot = $input.path('$'))
+{
+  "statusCode": 200,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{
+    $input.json('$')
+  }"
+}"
+`;

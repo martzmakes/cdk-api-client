@@ -63,14 +63,12 @@ test('generates GET request VTL template for simple ID interface', () => {
 
   // Check content of VTL file
   const vtlContent = fs.readFileSync(vtlFilePath, 'utf8');
-  console.log(`VTL content: ${vtlContent}`);
+  // Snapshot test for GET request template
+  expect(vtlContent).toMatchSnapshot('GET request VTL template');
   expect(vtlContent).toContain('TableName');
   expect(vtlContent).toContain('KeyConditionExpression');
   expect(vtlContent).toContain('"#pk": "id"');
   expect(vtlContent).toContain('$input.params(\'id\')');
-  
-  // Snapshot test for GET request template
-  expect(vtlContent).toMatchSnapshot('GET request VTL template');
 });
 
 test('generates POST request VTL template for complex interface', () => {
@@ -200,6 +198,10 @@ test('generates response VTL template', () => {
 
   // Check content of VTL file
   const vtlContent = fs.readFileSync(vtlFilePath, 'utf8');
+  // Snapshot test for response template
+  expect(vtlContent).toMatchSnapshot('Response VTL template');
+
+  
   expect(vtlContent).toContain('#set($inputRoot = $input.path(\'$\'))');
   expect(vtlContent).toContain('"statusCode": 200');
   expect(vtlContent).toContain('"Content-Type": "application/json"');
@@ -207,9 +209,6 @@ test('generates response VTL template', () => {
   expect(vtlContent).toContain('\\"count\\":#if($inputRoot.count)$inputRoot.count#else0#end');
   expect(vtlContent).toContain('\\"isActive\\":#if($inputRoot.isActive)$inputRoot.isActive#else false#end');
   expect(vtlContent).toContain('\\"tags\\":#if($inputRoot.tags)$util.escapeJavaScript($input.json(\'$.tags\'))#else[]#end');
-  
-  // Snapshot test for response template
-  expect(vtlContent).toMatchSnapshot('Response VTL template');
 });
 
 test('uses basic templates when interface files not found', () => {
