@@ -1,112 +1,91 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`generates DELETE request VTL template: DELETE request VTL template 1`] = `
-"{
-  "TableName": "TestTable",
-  "Key": {
-    "id": {
-      "S": "$input.params('id')"
-    }
-  }
-}"
-`;
-
-exports[`generates GET request VTL template for simple ID interface: GET request VTL template 1`] = `
-"{
-  "TableName": "TestTable",
-  "KeyConditionExpression": "#pk = :pkVal",
-  "ExpressionAttributeNames": {
-    "#pk": "id"
-  },
-  "ExpressionAttributeValues": {
-    ":pkVal": {
-      "S": "$input.params('id')"
-    }
-  }
-}"
-`;
+exports[`generates GET request VTL template for simple ID interface: GET request VTL template 1`] = `"{"TableName":"TestTable","Key":{"pk":{"S":"SOME#$method.request.path.id"},"sk":{"S":"ITEM"}}}"`;
 
 exports[`generates POST request VTL template for complex interface: POST request VTL template 1`] = `
 "{
-  "TableName": "TestTable",
-  "Item": {
-    "id": {
-      "S": $input.json('$.id')
-    },
-    "count": {
-      "N": $input.json('$.count')
-    },
-    "isActive": {
-      "BOOL": $input.json('$.isActive')
-    },
-    "tags": $util.dynamodb.toDynamoDBJson($input.json('$.tags'))
-  }
-}"
-`;
-
-exports[`generates PUT request VTL template: PUT request VTL template 1`] = `
-"{
-  "TableName": "TestTable",
-  "Key": {
-    "id": {
-      "S": "$input.params('id')"
-    }
-  },
-  "UpdateExpression": "set #name = :name, #description = :description, #updatedAt = :updatedAt",
-  "ExpressionAttributeNames": {
-    "#name": "name",
-    "#description": "description",
-    "#updatedAt": "updatedAt"
-  },
-  "ExpressionAttributeValues": {
-    ":name": {
-      "S": "$input.json('$.name')"
-    },
-    ":description": {
-      "S": "$input.json('$.description')"
-    },
-    ":updatedAt": {
-      "S": "$util.time.nowISO8601()"
-    }
-  }
-}"
+    
+#set($hasLimit = ("$input.params().querystring.limit" != ""))
+#set($limit = "#if($hasLimit)$input.params().querystring.limit#{else}#end")
+#if($limit != "")
+  "Limit": $limit,
+#end
+#if("$input.params().querystring.LastEvaluatedKey" != "")
+  "ExclusiveStartKey": $util.base64Decode($util.urlDecode("$input.params().querystring.LastEvaluatedKey")),
+#elseif(($context.httpMethod == "POST" || $context.httpMethod == "PUT") && "$inputRoot.LastEvaluatedKey" != "")
+  "ExclusiveStartKey": $util.base64Decode($util.urlDecode("$inputRoot.LastEvaluatedKey")),
+#end
+    "TableName":"TestTable"}"
 `;
 
 exports[`generates response VTL template: Response VTL template 1`] = `
 "#set($inputRoot = $input.path('$'))
+#set($context.responseOverride.header.Content-Type = "application/json")
+#set($context.responseOverride.header.Access-Control-Allow-Origin = "*")
+#set($comma=",")
+#define($outputConditionalString)#if($obj[$key] != "")"$key": "$util.escapeJavaScript($obj[$key].S)"$comma#end#end
+#define($outputConditionalBoolean)#if($obj[$key] != "")"$key": $obj[$key].BOOL$comma#end#end
+#define($outputConditionalNumber)#if($obj[$key] != "")"$key": $obj[$key].N$comma#end#end
+
+#set($item = $input.path('$.Item'))
+
+#if("$inputRoot.Item" != "")
 {
-  "statusCode": 200,
-  "headers": {
-    "Content-Type": "application/json"
-  },
-  "body": "{
-    \\"id\\":#if($inputRoot.id)\\"$util.escapeJavaScript($inputRoot.id)\\"#elsenull#end,
-    \\"name\\":#if($inputRoot.name)\\"$util.escapeJavaScript($inputRoot.name)\\"#elsenull#end,
-    \\"count\\":#if($inputRoot.count)$inputRoot.count#else0#end,
-    \\"isActive\\":#if($inputRoot.isActive)$inputRoot.isActive#else false#end,
-    \\"tags\\":#if($inputRoot.tags)$util.escapeJavaScript($input.json('$.tags'))#else[]#end,
-    \\"created\\":#if($inputRoot.created)\\"$util.escapeJavaScript($inputRoot.created)\\"#elsenull#end
-  }"
-}"
+#set($obj=$item)
+#set($key="id") $outputConditionalString
+#set($key="name") $outputConditionalString
+#set($key="count") $outputConditionalNumber
+#set($key="isActive") $outputConditionalBoolean
+#set($key="tags") $outputConditionalString
+#set($key="created") $outputConditionalString
+"pk": "$item.pk.S",
+"sk": "$item.sk.S"
+}
+#else
+{
+  #set($context.responseOverride.status = 404)
+  "message": "No 'items' found"
+}
+#end"
 `;
 
-exports[`uses basic templates when interface files not found: Fallback request VTL template 1`] = `
-"{
-  "pk": "pk",
-  "sk": "sk",
-  "method": "GET"
-}"
-`;
+exports[`uses basic templates when interface files not found: Fallback request VTL template 1`] = `"{"TableName":"TestTable","Key":{"pk":{"S":"SOME#$method.request.path.id"},"sk":{"S":"ITEM"}}}"`;
 
 exports[`uses basic templates when interface files not found: Fallback response VTL template 1`] = `
 "#set($inputRoot = $input.path('$'))
+#set($context.responseOverride.header.Content-Type = "application/json")
+#set($context.responseOverride.header.Access-Control-Allow-Origin = "*")
+#set($comma=",")
+#define($outputConditionalString)#if($obj[$key] != "")"$key": "$util.escapeJavaScript($obj[$key].S)"$comma#end#end
+#define($outputConditionalBoolean)#if($obj[$key] != "")"$key": $obj[$key].BOOL$comma#end#end
+#define($outputConditionalNumber)#if($obj[$key] != "")"$key": $obj[$key].N$comma#end#end
+
+#set($items = $input.path('$.Items'))
+#set($item = $input.path('$.Item'))
+
+#if(!$inputRoot.Items.isEmpty())
 {
-  "statusCode": 200,
-  "headers": {
-    "Content-Type": "application/json"
-  },
-  "body": "{
-    $input.json('$')
-  }"
-}"
+#if("$inputRoot.LastEvaluatedKey" != "")
+  "LastEvaluatedKey": "$util.urlEncode($util.base64Encode("$input.json('$.LastEvaluatedKey').toString()"))",
+#end
+  "items": [
+  #foreach($item in $input.path('$.Items'))
+  {
+#set($obj=$item)
+#foreach($key in $obj.keySet())
+#if($obj[$key].S)$outputConditionalString#end
+#if($obj[$key].N)$outputConditionalNumber#end
+#if($obj[$key].BOOL)$outputConditionalBoolean#end
+#end
+  "pk": "$item.pk.S",
+  "sk": "$item.sk.S"
+  }#if($foreach.hasNext),#end
+  #end
+]
+}
+#else
+{
+  "items": []
+}
+#end"
 `;

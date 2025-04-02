@@ -15,9 +15,9 @@ export interface EndpointDynamo {
   output?: any;
   path: string;
   pk?: string;
-  requestTemplate?: string;
+  requestTemplateOverride?: string;
   responseKey?: string;
-  responseTemplate: string;
+  responseTemplateOverride?: string;
   responseTemplateDisableItemNotFoundHandler?: boolean;
   sk?: string;
   tableName: string;

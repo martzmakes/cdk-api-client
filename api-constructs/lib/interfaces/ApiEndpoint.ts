@@ -7,7 +7,7 @@ export type ApiEndpoint<
   M extends HttpMethod,
   Input = InputAllowed<M>,
   Output = any,
-  Resources = any,
+  Resources = any
 > = {
   description?: string;
   input?: Input;
@@ -18,11 +18,9 @@ export type ApiEndpoint<
   | {
       entry: string;
       queue?: boolean;
-      lambdaGenerator: (args: Resources) => Omit<LambdaProps, "entry" | "name" | "queue" | "description">;
+      lambdaGenerator: (
+        args: Resources
+      ) => Omit<LambdaProps, "entry" | "name" | "queue" | "description">;
     }
-  | {
-      dynamoGenerator: (args: Resources) => Omit<EndpointDynamo, "method" | "path" | "requestTemplate" | "responseTemplate">;
-      requestTemplateOverride?: InputAllowed<M, string>;
-      responseTemplateOverride?: string;
-    }
+  | EndpointDynamo
 );
