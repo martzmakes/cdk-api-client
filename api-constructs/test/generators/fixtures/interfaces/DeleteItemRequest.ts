@@ -1,3 +1,4 @@
 export interface DeleteItemRequest {
-  id: string;
+  pk: string;
+  sk: string;
 }

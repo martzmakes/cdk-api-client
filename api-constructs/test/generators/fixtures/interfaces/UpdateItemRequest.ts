@@ -1,5 +1,6 @@
 export interface UpdateItemRequest {
-  id: string;
+  pk: string;
+  sk: string;
   name: string;
   description: string;
   count: number;

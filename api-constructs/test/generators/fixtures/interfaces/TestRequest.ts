@@ -1,5 +1,6 @@
 export interface TestRequest {
-  id: string;
+  pk: string;
+  sk: string;
   filter?: string;
   limit?: number;
 }

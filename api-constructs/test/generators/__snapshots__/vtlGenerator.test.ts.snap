@@ -32,7 +32,6 @@ exports[`generates response VTL template: Response VTL template 1`] = `
 #if("$inputRoot.Item" != "")
 {
 #set($obj=$item)
-#set($key="id") $outputConditionalString
 #set($key="name") $outputConditionalString
 #set($key="count") $outputConditionalNumber
 #set($key="isActive") $outputConditionalBoolean
@@ -44,7 +43,7 @@ exports[`generates response VTL template: Response VTL template 1`] = `
 #else
 {
   #set($context.responseOverride.status = 404)
-  "message": "No 'items' found"
+  "message": "No 'item' found"
 }
 #end"
 `;

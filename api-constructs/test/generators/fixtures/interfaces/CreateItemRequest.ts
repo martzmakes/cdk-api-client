@@ -1,5 +1,6 @@
 export interface CreateItemRequest {
-  id: string;
+  pk: string;
+  sk: string;
   name: string;
   count: number;
   isActive: boolean;

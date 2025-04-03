@@ -27,6 +27,7 @@ import { ApiClientDefinition, ApiEndpoint } from "../interfaces";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import { Lambda } from "@martzmakes/constructs/cdk/constructs/lambda";
+import { EndpointDynamo } from "../interfaces/EndpointDynamo";
 
 /**
  * Properties for creating a DefinedInternalApi
@@ -125,6 +126,12 @@ export class DefinedInternalApi extends Construct {
           endpointResources: props.endpointResources,
           name,
         });
+      } else if ('action' in apiEndpoint) {
+        this.addDynamoEndpoint({
+          apiResource,
+          apiEndpoint,
+          name,
+        })
       }
     });
   }
@@ -286,4 +293,51 @@ export class DefinedInternalApi extends Construct {
       this.methods[endpoint.name] = method;
     }
   }
+  
+  addDynamoEndpoint({
+    apiEndpoint,
+    apiResource,
+    name,
+  }: {
+    apiEndpoint: Extract<ApiEndpoint<any, any, any, any>, EndpointDynamo>;
+    apiResource: Resource;
+    endpointResources: any;
+    name: string;
+  }) {
+    const endpoint = {
+      name,
+      ...apiEndpoint,
+    };
+    const integration = new AwsIntegration({
+      service: "dynamodb",
+      action: apiEndpoint.action,
+      options: {
+        credentialsRole: this.getCredentialsRole(),
+        requestTemplates: {
+          "application/json": ``,
+        },
+        integrationResponses: [
+          {
+            statusCode: "200",
+            responseTemplates: {
+              "application/json": ``,
+            },
+          },
+          {
+            statusCode: "400",
+          },
+          {
+            statusCode: "500",
+          },
+        ],
+      },
+    });
+    const method = apiResource.addMethod(apiEndpoint.method, integration, {
+      authorizationType: AuthorizationType.IAM,
+      requestModels: { "application/json": apiEndpoint.input },
+      requestParameters: { [`method.request.path.${apiEndpoint.pk}`]: true },
+    });
+    this.methods[name] = method;
+  }
 }
+
